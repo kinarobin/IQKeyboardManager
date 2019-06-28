@@ -192,14 +192,13 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 #pragma mark - Initializing functions
 
 /** Override +load method to enable KeyboardManager when class loader load IQKeyboardManager. Enabling when app starts (No need to write any code) */
-+(void)load
-{
++ (void)load {
     //Enabling IQKeyboardManager. Loading asynchronous on main thread
     [self performSelectorOnMainThread:@selector(sharedManager) withObject:nil waitUntilDone:NO];
 }
 
 /*  Singleton Object Initialization. */
--(instancetype)init {
+- (instancetype)init {
     if (self = [super init])
     {
         __weak __typeof__(self) weakSelf = self;
@@ -1401,8 +1400,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 
 #pragma mark - UIStatusBar Notification methods
 /**  UIApplicationWillChangeStatusBarOrientationNotification. Need to set the textView to it's original position. If any frame changes made. (Bug ID: #92)*/
-- (void)willChangeStatusBarOrientation:(NSNotification*)aNotification
-{
+- (void)willChangeStatusBarOrientation:(NSNotification*)aNotification {
     UIInterfaceOrientation currentStatusBarOrientation = UIInterfaceOrientationUnknown;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
@@ -1453,10 +1451,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 #pragma mark AutoResign methods
 
 /** Resigning on tap gesture. */
-- (void)tapRecognized:(UITapGestureRecognizer*)gesture  // (Enhancement ID: #14)
-{
-    if (gesture.state == UIGestureRecognizerStateEnded)
-    {
+- (void)tapRecognized:(UITapGestureRecognizer*)gesture { // (Enhancement ID: #14)
+    if (gesture.state == UIGestureRecognizerStateEnded) {
         //Resigning currently responder textField.
         [self resignFirstResponder];
     }
@@ -1479,12 +1475,10 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 }
 
 /** Resigning textField. */
-- (BOOL)resignFirstResponder
-{
+- (BOOL)resignFirstResponder {
     UIView *textFieldView = _textFieldView;
 
-    if (textFieldView)
-    {
+    if (textFieldView) {
         //  Retaining textFieldView
         UIView *textFieldRetain = textFieldView;
         
@@ -1492,25 +1486,20 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
         BOOL isResignFirstResponder = [textFieldView resignFirstResponder];
         
         //  If it refuses then becoming it as first responder again.    (Bug ID: #96)
-        if (isResignFirstResponder == NO)
-        {
+        if (isResignFirstResponder == NO) {
             //If it refuses to resign then becoming it first responder again for getting notifications callback.
             [textFieldRetain becomeFirstResponder];
             
             [self showLog:[NSString stringWithFormat:@"Refuses to Resign first responder: %@",textFieldView]];
         }
-        
         return isResignFirstResponder;
-    }
-    else
-    {
+    } else {
         return NO;
     }
 }
 
 /** Returns YES if can navigate to previous responder textField/textView, otherwise NO. */
--(BOOL)canGoPrevious
-{
+- (BOOL)canGoPrevious {
     //Getting all responder view's.
     NSArray<UIView*> *textFields = [self responderViews];
 
@@ -1518,20 +1507,15 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     NSUInteger index = [textFields indexOfObject:_textFieldView];
 
     //If it is not first textField. then it's previous object can becomeFirstResponder.
-    if (index != NSNotFound &&
-        index > 0)
-    {
+    if (index != NSNotFound && index > 0) {
         return YES;
-    }
-    else
-    {
+    } else {
         return NO;
     }
 }
 
 /** Returns YES if can navigate to next responder textField/textView, otherwise NO. */
--(BOOL)canGoNext
-{
+- (BOOL)canGoNext {
     //Getting all responder view's.
     NSArray<UIView*> *textFields = [self responderViews];
     
@@ -1539,20 +1523,15 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     NSUInteger index = [textFields indexOfObject:_textFieldView];
     
     //If it is not last textField. then it's next object becomeFirstResponder.
-    if (index != NSNotFound &&
-        index < textFields.count-1)
-    {
+    if (index != NSNotFound && index < textFields.count - 1) {
         return YES;
-    }
-    else
-    {
+    } else {
         return NO;
     }
 }
 
 /** Navigate to previous responder textField/textView.  */
--(BOOL)goPrevious
-{
+- (BOOL)goPrevious {
     //Getting all responder view's.
     NSArray<__kindof UIView*> *textFields = [self responderViews];
     
@@ -1560,9 +1539,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     NSUInteger index = [textFields indexOfObject:_textFieldView];
     
     //If it is not first textField. then it's previous object becomeFirstResponder.
-    if (index != NSNotFound &&
-        index > 0)
-    {
+    if (index != NSNotFound && index > 0) {
         UITextField *nextTextField = textFields[index-1];
         
         //  Retaining textFieldView
@@ -1571,25 +1548,20 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
         BOOL isAcceptAsFirstResponder = [nextTextField becomeFirstResponder];
         
         //  If it refuses then becoming previous textFieldView as first responder again.    (Bug ID: #96)
-        if (isAcceptAsFirstResponder == NO)
-        {
+        if (isAcceptAsFirstResponder == NO) {
             //If next field refuses to become first responder then restoring old textField as first responder.
             [textFieldRetain becomeFirstResponder];
             
             [self showLog:[NSString stringWithFormat:@"Refuses to become first responder: %@",nextTextField]];
         }
-        
         return isAcceptAsFirstResponder;
-    }
-    else
-    {
+    } else {
         return NO;
     }
 }
 
 /** Navigate to next responder textField/textView.  */
--(BOOL)goNext
-{
+- (BOOL)goNext {
     //Getting all responder view's.
     NSArray<__kindof UIView*> *textFields = [self responderViews];
     
@@ -1597,29 +1569,21 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     NSUInteger index = [textFields indexOfObject:_textFieldView];
     
     //If it is not last textField. then it's next object becomeFirstResponder.
-    if (index != NSNotFound &&
-        index < textFields.count-1)
-    {
-        UITextField *nextTextField = textFields[index+1];
+    if (index != NSNotFound && index < textFields.count - 1) {
+        UITextField *nextTextField = textFields[index + 1];
         
         //  Retaining textFieldView
         UIView *textFieldRetain = _textFieldView;
-        
         BOOL isAcceptAsFirstResponder = [nextTextField becomeFirstResponder];
-        
         //  If it refuses then becoming previous textFieldView as first responder again.    (Bug ID: #96)
-        if (isAcceptAsFirstResponder == NO)
-        {
+        if (isAcceptAsFirstResponder == NO) {
             //If next field refuses to become first responder then restoring old textField as first responder.
             [textFieldRetain becomeFirstResponder];
             
             [self showLog:[NSString stringWithFormat:@"Refuses to become first responder: %@",nextTextField]];
         }
-        
         return isAcceptAsFirstResponder;
-    }
-    else
-    {
+    } else {
         return NO;
     }
 }
@@ -1822,8 +1786,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 }
 
 /** Remove any toolbar if it is IQToolbar. */
--(void)removeToolbarIfRequired  //  (Bug ID: #18)
-{
+- (void)removeToolbarIfRequired { //  (Bug ID: #18)
     CFTimeInterval startTime = CACurrentMediaTime();
     [self showLog:[NSString stringWithFormat:@"****** %@ started ******",NSStringFromSelector(_cmd)] indentation:1];
 
@@ -1832,15 +1795,13 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     
     [self showLog:[NSString stringWithFormat:@"Found %lu responder sibling(s)",(unsigned long)siblings.count]];
 
-    for (UITextField *textField in siblings)
-    {
+    for (UITextField *textField in siblings) {
         UIView *toolbar = [textField inputAccessoryView];
         
         //  (Bug ID: #78)
         //setInputAccessoryView: check   (Bug ID: #307)
         if ([textField respondsToSelector:@selector(setInputAccessoryView:)] &&
-            ([toolbar isKindOfClass:[IQToolbar class]] && (toolbar.tag == kIQDoneButtonToolbarTag || toolbar.tag == kIQPreviousNextButtonToolbarTag)))
-        {
+            ([toolbar isKindOfClass:[IQToolbar class]] && (toolbar.tag == kIQDoneButtonToolbarTag || toolbar.tag == kIQPreviousNextButtonToolbarTag))) {
             textField.inputAccessoryView = nil;
             [textField reloadInputViews];
         }
