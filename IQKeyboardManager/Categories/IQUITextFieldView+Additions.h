@@ -40,10 +40,6 @@
  */
 @property(nonatomic, assign) BOOL ignoreSwitchingByNextPrevious;
 
-///**
-// Override Enable/disable managing distance between keyboard and textField behaviour for this particular textField.
-// */
-//@property(nonatomic, assign) IQEnableMode enableMode;
 
 /**
  Override resigns Keyboard on touching outside of UITextField/View behaviour for this particular textField.

@@ -42,16 +42,14 @@
 @synthesize doneBarButton = _doneBarButton;
 @synthesize fixedSpaceBarButton = _fixedSpaceBarButton;
 
-+(void)initialize
-{
++(void)initialize {
     [super initialize];
 
     IQToolbar *appearanceProxy = [self appearance];
     
     NSArray <NSNumber*> *positions = @[@(UIBarPositionAny),@(UIBarPositionBottom),@(UIBarPositionTop),@(UIBarPositionTopAttached)];
 
-    for (NSNumber *position in positions)
-    {
+    for (NSNumber *position in positions) {
         UIToolbarPosition toolbarPosition = [position unsignedIntegerValue];
 
         [appearanceProxy setBackgroundImage:nil forToolbarPosition:toolbarPosition barMetrics:UIBarMetricsDefault];
@@ -59,42 +57,34 @@
     }
 }
 
--(void)initialize
-{
+- (void)initialize {
     [self sizeToFit];
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;// | UIViewAutoresizingFlexibleHeight;
     self.translucent = YES;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-    if (self)
-    {
+    if (self) {
         [self initialize];
     }
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
+- (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
-    if (self)
-    {
+    if (self) {
         [self initialize];
     }
     return self;
 }
 
--(void)dealloc
-{
+- (void)dealloc {
     self.items = nil;
 }
 
--(IQBarButtonItem *)previousBarButton
-{
-    if (_previousBarButton == nil)
-    {
+- (IQBarButtonItem *)previousBarButton {
+    if (_previousBarButton == nil) {
         _previousBarButton = [[IQBarButtonItem alloc] initWithImage:nil style:UIBarButtonItemStylePlain target:nil action:nil];
         _previousBarButton.accessibilityLabel = @"Previous";
     }
@@ -102,10 +92,8 @@
     return _previousBarButton;
 }
 
--(IQBarButtonItem *)nextBarButton
-{
-    if (_nextBarButton == nil)
-    {
+- (IQBarButtonItem *)nextBarButton {
+    if (_nextBarButton == nil) {
         _nextBarButton = [[IQBarButtonItem alloc] initWithImage:nil style:UIBarButtonItemStylePlain target:nil action:nil];
         _nextBarButton.accessibilityLabel = @"Next";
     }
@@ -113,10 +101,8 @@
     return _nextBarButton;
 }
 
--(IQTitleBarButtonItem *)titleBarButton
-{
-    if (_titleBarButton == nil)
-    {
+- (IQTitleBarButtonItem *)titleBarButton {
+    if (_titleBarButton == nil) {
         _titleBarButton = [[IQTitleBarButtonItem alloc] initWithTitle:nil];
         _titleBarButton.accessibilityLabel = @"Title";
     }
@@ -124,10 +110,8 @@
     return _titleBarButton;
 }
 
--(IQBarButtonItem *)doneBarButton
-{
-    if (_doneBarButton == nil)
-    {
+- (IQBarButtonItem *)doneBarButton {
+    if (_doneBarButton == nil) {
         _doneBarButton = [[IQBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:nil action:nil];
         _doneBarButton.accessibilityLabel = @"Done";
     }
@@ -135,17 +119,12 @@
     return _doneBarButton;
 }
 
--(IQBarButtonItem *)fixedSpaceBarButton
-{
-    if (_fixedSpaceBarButton == nil)
-    {
+- (IQBarButtonItem *)fixedSpaceBarButton {
+    if (_fixedSpaceBarButton == nil) {
         _fixedSpaceBarButton = [[IQBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-        if (@available(iOS 10.0, *))
-        {
+        if (@available(iOS 10.0, *)) {
             [_fixedSpaceBarButton setWidth:6];
-        }
-        else
-        {
+        } else {
             [_fixedSpaceBarButton setWidth:20];
         }
     }
@@ -153,8 +132,7 @@
     return _fixedSpaceBarButton;
 }
 
--(CGSize)sizeThatFits:(CGSize)size
-{
+- (CGSize)sizeThatFits:(CGSize)size {
     CGSize sizeThatFit = [super sizeThatFits:size];
 
     sizeThatFit.height = 44;
@@ -162,35 +140,27 @@
     return sizeThatFit;
 }
 
--(void)setBarStyle:(UIBarStyle)barStyle
-{
+- (void)setBarStyle:(UIBarStyle)barStyle {
     [super setBarStyle:barStyle];
     
-    if (self.titleBarButton.selectableTitleColor == nil)
-    {
-        if (barStyle == UIBarStyleDefault)
-        {
+    if (self.titleBarButton.selectableTitleColor == nil) {
+        if (barStyle == UIBarStyleDefault) {
             [self.titleBarButton.titleButton setTitleColor:[UIColor colorWithRed:0.0 green:0.5 blue:1.0 alpha:1.0] forState:UIControlStateNormal];
-        }
-        else
-        {
+        } else {
             [self.titleBarButton.titleButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
         }
     }
 }
 
--(void)setTintColor:(UIColor *)tintColor
-{
+- (void)setTintColor:(UIColor *)tintColor {
     [super setTintColor:tintColor];
 
-    for (UIBarButtonItem *item in self.items)
-    {
+    for (UIBarButtonItem *item in self.items) {
         [item setTintColor:tintColor];
     }
 }
 
--(void)layoutSubviews
-{
+- (void)layoutSubviews {
     [super layoutSubviews];
 
     if (@available(iOS 11.0, *)) {}
@@ -219,20 +189,15 @@
             else    return NSOrderedSame;
         }];
         
-        for (UIView *barButtonItemView in subviews)
-        {
-            if (isTitleBarButtonFound == YES)
-            {
+        for (UIView *barButtonItemView in subviews) {
+            if (isTitleBarButtonFound == YES) {
                 rightRect = barButtonItemView.frame;
                 break;
-            }
-            else if (barButtonItemView == self.titleBarButton.customView)
-            {
+            } else if (barButtonItemView == self.titleBarButton.customView) {
                 isTitleBarButtonFound = YES;
             }
             //If it's UIToolbarButton or UIToolbarTextButton (which actually UIBarButtonItem)
-            else if ([barButtonItemView isKindOfClass:[UIControl class]])
-            {
+            else if ([barButtonItemView isKindOfClass:[UIControl class]]) {
                 leftRect = barButtonItemView.frame;
             }
         }
@@ -248,24 +213,19 @@
 
         CGFloat x = titleMargin;
 
-        if (sizeThatFits.width > 0 && sizeThatFits.height > 0)
-        {
+        if (sizeThatFits.width > 0 && sizeThatFits.height > 0) {
             CGFloat width = MIN(sizeThatFits.width, maxWidth);
             CGFloat height = MIN(sizeThatFits.height, maxHeight);
             
-            if (CGRectIsNull(leftRect) == false)
-            {
+            if (CGRectIsNull(leftRect) == false) {
                 x = titleMargin + CGRectGetMaxX(leftRect) + ((maxWidth - width)/2);
             }
             
             CGFloat y = (maxHeight - height)/2;
             
             titleRect = CGRectMake(x, y, width, height);
-        }
-        else
-        {
-            if (CGRectIsNull(leftRect) == false)
-            {
+        } else {
+            if (CGRectIsNull(leftRect) == false) {
                 x = titleMargin + CGRectGetMaxX(leftRect);
             }
             
@@ -279,8 +239,7 @@
 }
 
 #pragma mark - UIInputViewAudioFeedback delegate
-- (BOOL) enableInputClicksWhenVisible
-{
+- (BOOL)enableInputClicksWhenVisible {
 	return YES;
 }
 

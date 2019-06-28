@@ -227,7 +227,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
             [strongSelf setEnable:YES];
             [strongSelf setKeyboardDistanceFromTextField:10.0];
             [strongSelf setShouldPlayInputClicks:YES];
-            [strongSelf setShouldResignOnTouchOutside:NO];
+            [strongSelf setShouldResignOnTouchOutside:YES];
             [strongSelf setOverrideKeyboardAppearance:NO];
             [strongSelf setKeyboardAppearance:UIKeyboardAppearanceDefault];
             [strongSelf setEnableAutoToolbar:YES];
@@ -319,53 +319,39 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 - (BOOL)privateIsEnabled {
     BOOL enable = _enable;
     
-//    IQEnableMode enableMode = _textFieldView.enableMode;
-//
-//    if (enableMode == IQEnableModeEnabled)
-//    {
-//        enable = YES;
-//    }
-//    else if (enableMode == IQEnableModeDisabled)
-//    {
-//        enable = NO;
-//    }
-//    else
-    {
-        UIViewController *textFieldViewController = [_textFieldView viewContainingController];
+    UIViewController *textFieldViewController = [_textFieldView viewContainingController];
+    
+    if (textFieldViewController) {
+        if (!enable) {
+            //If viewController is kind of enable viewController class, then assuming it's enabled.
+            for (Class enabledClass in _enabledDistanceHandlingClasses)  {
+                if ([textFieldViewController isKindOfClass:enabledClass]) {
+                    enable = YES;
+                    break;
+                }
+            }
+        }
         
-        if (textFieldViewController) {
-            if (enable == NO)  {
-                //If viewController is kind of enable viewController class, then assuming it's enabled.
-                for (Class enabledClass in _enabledDistanceHandlingClasses)  {
-                    if ([textFieldViewController isKindOfClass:enabledClass]) {
-                        enable = YES;
-                        break;
-                    }
+        if (enable) {
+            //If viewController is kind of disable viewController class, then assuming it's disable.
+            for (Class disabledClass in _disabledDistanceHandlingClasses) {
+                if ([textFieldViewController isKindOfClass:disabledClass]) {
+                    enable = NO;
+                    break;
                 }
             }
             
+            //Special Controllers
             if (enable) {
-                //If viewController is kind of disable viewController class, then assuming it's disable.
-                for (Class disabledClass in _disabledDistanceHandlingClasses) {
-                    if ([textFieldViewController isKindOfClass:disabledClass]) {
-                        enable = NO;
-                        break;
-                    }
-                }
+                NSString *classNameString = NSStringFromClass([textFieldViewController class]);
                 
-                //Special Controllers
-                if (enable == YES) {
-                    NSString *classNameString = NSStringFromClass([textFieldViewController class]);
-                    
-                    //_UIAlertControllerTextFieldViewController
-                    if ([classNameString containsString:@"UIAlertController"] && [classNameString hasSuffix:@"TextFieldViewController"]) {
-                        enable = NO;
-                    }
+                //_UIAlertControllerTextFieldViewController
+                if ([classNameString containsString:@"UIAlertController"] && [classNameString hasSuffix:@"TextFieldViewController"]) {
+                    enable = NO;
                 }
             }
         }
     }
-    
     return enable;
 }
 
@@ -401,7 +387,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
         UIViewController *textFieldViewController = [textFieldView viewContainingController];
         
         if (textFieldViewController) {
-            if (shouldResignOnTouchOutside == NO) {
+            if (!shouldResignOnTouchOutside) {
                 //If viewController is kind of enable viewController class, then assuming shouldResignOnTouchOutside is enabled.
                 for (Class enabledClass in _enabledTouchResignedClasses) {
                     if ([textFieldViewController isKindOfClass:enabledClass]) {
@@ -421,7 +407,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
                 }
                 
                 //Special Controllers
-                if (shouldResignOnTouchOutside == YES) {
+                if (shouldResignOnTouchOutside) {
                     NSString *classNameString = NSStringFromClass([textFieldViewController class]);
                     
                     //_UIAlertControllerTextFieldViewController
@@ -457,7 +443,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     UIViewController *textFieldViewController = [_textFieldView viewContainingController];
     
     if (textFieldViewController) {
-        if (enableAutoToolbar == NO) {
+        if (!enableAutoToolbar) {
             //If found any toolbar enabled classes then return.
             for (Class enabledToolbarClass in _enabledToolbarClasses) {
                 if ([textFieldViewController isKindOfClass:enabledToolbarClass]) {
@@ -475,10 +461,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
                     break;
                 }
             }
-            
-            
             //Special Controllers
-            if (enableAutoToolbar == YES) {
+            if (enableAutoToolbar) {
                 NSString *classNameString = NSStringFromClass([textFieldViewController class]);
                 
                 //_UIAlertControllerTextFieldViewController
@@ -1149,7 +1133,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     UIViewController *controller = [textFieldView topMostController];
 
     //If _textFieldView viewController is presented as formSheet, then adjustPosition again because iOS internally update formSheet frame on keyboardShown. (Bug ID: #37, #74, #76)
-    if (_keyboardShowing == YES && textFieldView && (controller.modalPresentationStyle == UIModalPresentationFormSheet || controller.modalPresentationStyle == UIModalPresentationPageSheet) && [textFieldView isAlertViewTextField] == NO) {
+    if (_keyboardShowing && textFieldView && (controller.modalPresentationStyle == UIModalPresentationFormSheet || controller.modalPresentationStyle == UIModalPresentationPageSheet) && [textFieldView isAlertViewTextField] == NO) {
         [self optimizedAdjustPosition];
     }
     
@@ -1158,7 +1142,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 }
 
 /*  UIKeyboardWillHideNotification. So setting rootViewController to it's default frame. */
-- (void)keyboardWillHide:(NSNotification*)aNotification {
+- (void)keyboardWillHide:(NSNotification *)aNotification {
     //If it's not a fake notification generated by [self setEnable:NO].
     if (aNotification)	_kbShowNotification = nil;
     
@@ -1591,7 +1575,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 #pragma mark AutoToolbar methods
 
 /**    Get all UITextField/UITextView siblings of textFieldView. */
-- (NSArray<__kindof UIView*>*)responderViews {
+- (NSArray<__kindof UIView *> *)responderViews {
     UIView *superConsideredView;
     
     UIView *textFieldView = _textFieldView;
@@ -1651,7 +1635,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     //setInputAccessoryView: check   (Bug ID: #307)
     if ([textFieldView respondsToSelector:@selector(setInputAccessoryView:)]) {
         if ([textFieldView inputAccessoryView] == nil || [[textFieldView inputAccessoryView] tag] == kIQPreviousNextButtonToolbarTag || [[textFieldView inputAccessoryView] tag] == kIQDoneButtonToolbarTag) {
-            UITextField *textField = (UITextField*)textFieldView;
+            UITextField *textField = (UITextField *)textFieldView;
 
             IQBarButtonItemConfiguration *rightConfiguration = nil;
             
@@ -1667,7 +1651,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
             }
 
             //    If only one object is found, then adding only Done button.
-            if ((siblings.count==1 && self.previousNextDisplayMode == IQPreviousNextDisplayModeDefault) || self.previousNextDisplayMode == IQPreviousNextDisplayModeAlwaysHide) {
+            if ((siblings.count == 1 && self.previousNextDisplayMode == IQPreviousNextDisplayModeDefault) || self.previousNextDisplayMode == IQPreviousNextDisplayModeAlwaysHide) {
                 [textField addKeyboardToolbarWithTarget:self titleText:(_shouldShowToolbarPlaceholder ? textField.drawingToolbarPlaceholder : nil) rightBarButtonConfiguration:rightConfiguration previousBarButtonConfiguration:nil nextBarButtonConfiguration:nil];
 
                 textField.inputAccessoryView.tag = kIQDoneButtonToolbarTag; //  (Bug ID: #78)
@@ -1782,7 +1766,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     }
 
     CFTimeInterval elapsedTime = CACurrentMediaTime() - startTime;
-    [self showLog:[NSString stringWithFormat:@"****** %@ ended: %g seconds ******",NSStringFromSelector(_cmd),elapsedTime] indentation:-1];
+    [self showLog:[NSString stringWithFormat:@"****** %@ ended: %g seconds ******",NSStringFromSelector(_cmd),elapsedTime] indentation:- 1];
 }
 
 /** Remove any toolbar if it is IQToolbar. */
@@ -1791,7 +1775,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     [self showLog:[NSString stringWithFormat:@"****** %@ started ******",NSStringFromSelector(_cmd)] indentation:1];
 
     //    Getting all the sibling textFields.
-    NSArray<UIView*> *siblings = [self responderViews];
+    NSArray<UIView *> *siblings = [self responderViews];
     
     [self showLog:[NSString stringWithFormat:@"Found %lu responder sibling(s)",(unsigned long)siblings.count]];
 

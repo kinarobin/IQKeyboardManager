@@ -41,14 +41,14 @@
 
 @implementation UIView (IQ_UIView_Hierarchy)
 
-- (UIViewController*)viewContainingController {
+- (UIViewController *)viewContainingController {
     UIResponder *nextResponder =  self;
     
     do {
         nextResponder = [nextResponder nextResponder];
 
         if ([nextResponder isKindOfClass:[UIViewController class]])
-            return (UIViewController*)nextResponder;
+            return (UIViewController *)nextResponder;
     } while (nextResponder);
     return nil;
 }
@@ -171,15 +171,14 @@
         _IQcanBecomeFirstResponder = [(UITextView *)self isEditable];
     }
 
-    if (_IQcanBecomeFirstResponder == YES) {
-        _IQcanBecomeFirstResponder = ([self isUserInteractionEnabled] && ![self isHidden] && [self alpha]!=0.0 && ![self isAlertViewTextField]  && !self.textFieldSearchBar);
+    if (_IQcanBecomeFirstResponder) {
+        _IQcanBecomeFirstResponder = ([self isUserInteractionEnabled] && ![self isHidden] && [self alpha] != 0.0 && ![self isAlertViewTextField] && !self.textFieldSearchBar);
     }
     
     return _IQcanBecomeFirstResponder;
 }
 
-- (NSArray<UIView*>*)responderSiblings
-{
+- (NSArray<UIView *> *)responderSiblings {
     //	Getting all siblings
     NSArray<UIView*> *siblings = self.superview.subviews;
     
@@ -187,27 +186,23 @@
     NSMutableArray<UIView*> *tempTextFields = [[NSMutableArray alloc] init];
     
     for (UIView *textField in siblings)
-        if ((textField == self || textField.ignoreSwitchingByNextPrevious == NO) && [textField _IQcanBecomeFirstResponder])
+        if ((textField == self || textField.ignoreSwitchingByNextPrevious == NO) && [textField _IQcanBecomeFirstResponder]) {
             [tempTextFields addObject:textField];
-    
+        }
     return tempTextFields;
 }
 
-- (NSArray<UIView*>*)deepResponderViews
-{
-    NSMutableArray<UIView*> *textFields = [[NSMutableArray alloc] init];
+- (NSArray<UIView *> *)deepResponderViews {
+    NSMutableArray<UIView *> *textFields = [[NSMutableArray alloc] init];
     
-    for (UIView *textField in self.subviews)
-    {
-        if ((textField == self || textField.ignoreSwitchingByNextPrevious == NO) && [textField _IQcanBecomeFirstResponder])
-        {
+    for (UIView *textField in self.subviews) {
+        if ((textField == self || textField.ignoreSwitchingByNextPrevious == NO) && [textField _IQcanBecomeFirstResponder]) {
             [textFields addObject:textField];
         }
         
         //Sometimes there are hidden or disabled views and textField inside them still recorded, so we added some more validations here (Bug ID: #458)
         //Uncommented else (Bug ID: #625)
-        if (textField.subviews.count && [textField isUserInteractionEnabled] && ![textField isHidden] && [textField alpha]!=0.0)
-        {
+        if (textField.subviews.count && [textField isUserInteractionEnabled] && ![textField isHidden] && [textField alpha] != 0.0) {
             [textFields addObjectsFromArray:[textField deepResponderViews]];
         }
     }
@@ -223,22 +218,24 @@
         CGFloat x2 = CGRectGetMinX(frame2);
         CGFloat y2 = CGRectGetMinY(frame2);
         
-        if (y1 < y2)  return NSOrderedAscending;
-        
-        else if (y1 > y2) return NSOrderedDescending;
-        
-        //Else both y are same so checking for x positions
-        else if (x1 < x2)  return NSOrderedAscending;
-        
-        else if (x1 > x2) return NSOrderedDescending;
-        
-        else    return NSOrderedSame;
+        if (y1 < y2) {
+            return NSOrderedAscending;
+        } else if (y1 > y2) {
+            return NSOrderedDescending;
+        } else if (x1 < x2)  {
+            //Else both y are same so checking for x positions
+            return NSOrderedAscending;
+        } else if (x1 > x2) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
     }];
 
     return textFields;
 }
 
--(CGAffineTransform)convertTransformToView:(UIView*)toView
+- (CGAffineTransform)convertTransformToView:(UIView*)toView
 {
     if (toView == nil)
     {
@@ -368,7 +365,7 @@
 
 @implementation UIViewController (IQ_UIView_Hierarchy)
 
--(nullable UIViewController*)parentIQContainerViewController
+- (nullable UIViewController*)parentIQContainerViewController
 {
     return self;
 }
