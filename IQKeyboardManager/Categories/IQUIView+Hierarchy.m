@@ -128,11 +128,11 @@
     return finalController;
 }
 
-- (UIView*)superviewOfClassType:(nonnull Class)classType {
+- (UIView *)superviewOfClassType:(nonnull Class)classType {
     return [self superviewOfClassType:classType belowView:nil];
 }
 
--(nullable __kindof UIView*)superviewOfClassType:(nonnull Class)classType belowView:(nullable UIView*)belowView {
+- (nullable __kindof UIView *)superviewOfClassType:(nonnull Class)classType belowView:(nullable UIView *)belowView {
     UIView *superview = self.superview;
     
     while (superview) {
@@ -144,9 +144,7 @@
                 //  If it's not UITableViewWrapperView class, this is internal class which is actually manage in UITableview. The speciality of this class is that it's superview is UITableView.
                 //  If it's not UITableViewCellScrollView class, this is internal class which is actually manage in UITableviewCell. The speciality of this class is that it's superview is UITableViewCell.
                 //If it's not _UIQueuingScrollView class, actually we validate for _ prefix which usually used by Apple internal classes
-                if ([superview.superview isKindOfClass:[UITableView class]] == NO &&
-                    [superview.superview isKindOfClass:[UITableViewCell class]] == NO &&
-                    [classNameString hasPrefix:@"_"] == NO) {
+                if (![superview.superview isKindOfClass:[UITableView class]] && ![superview.superview isKindOfClass:[UITableViewCell class]] && [classNameString hasPrefix:@"_"] == NO) {
                     return superview;
                 }
             } else {

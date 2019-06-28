@@ -11,8 +11,7 @@
 #import "IQKeyboardReturnKeyHandler.h"
 #import "IQPreviousNextView.h"
 
-@interface CustomViewController ()<UIPopoverPresentationControllerDelegate>
-{
+@interface CustomViewController ()<UIPopoverPresentationControllerDelegate> {
     IQKeyboardReturnKeyHandler *returnHandler;
     
     IBOutlet UISwitch *switchDisableViewController;
@@ -34,8 +33,7 @@
 
 @implementation CustomViewController
 
--(void)dealloc
-{
+- (void)dealloc {
     returnHandler = nil;
 }
 
@@ -52,7 +50,7 @@
     // Do any additional setup after loading the view.
 }
 
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
@@ -70,23 +68,17 @@
 
 - (IBAction)tapAction:(UITapGestureRecognizer *)sender
 {
-    if (sender.state == UIGestureRecognizerStateEnded)
-    {
-        __weak __typeof__(self) weakSelf = self;
-
-        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction|7<<16 animations:^{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction|7 << 16 animations:^{
             
-            if (weakSelf.settingsTopConstraint.constant != 0)
-            {
-                weakSelf.settingsTopConstraint.constant = 0;
-            }
-            else
-            {
-                weakSelf.settingsTopConstraint.constant = -weakSelf.settingsView.frame.size.height+30;
+            if (self.settingsTopConstraint.constant != 0) {
+                self.settingsTopConstraint.constant = 0;
+            } else {
+                self.settingsTopConstraint.constant = - self.settingsView.frame.size.height + 30;
             }
             
-            [weakSelf.view setNeedsLayout];
-            [weakSelf.view layoutIfNeeded];
+            [self.view setNeedsLayout];
+            [self.view layoutIfNeeded];
             
         } completion:^(BOOL finished) {
             
@@ -94,109 +86,79 @@
     }
 }
 
-- (IBAction)disableInViewControllerAction:(UISwitch *)sender
-{
+- (IBAction)disableInViewControllerAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] disabledDistanceHandlingClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] disabledDistanceHandlingClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)enableInViewControllerAction:(UISwitch *)sender
-{
+- (IBAction)enableInViewControllerAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] enabledDistanceHandlingClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] enabledDistanceHandlingClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)disableToolbarAction:(UISwitch *)sender
-{
+- (IBAction)disableToolbarAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] disabledToolbarClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] disabledToolbarClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)enableToolbarAction:(UISwitch *)sender
-{
+- (IBAction)enableToolbarAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] enabledToolbarClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] enabledToolbarClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)disableTouchOutsideAction:(UISwitch *)sender
-{
+- (IBAction)disableTouchOutsideAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] disabledTouchResignedClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] disabledTouchResignedClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)enableTouchOutsideAction:(UISwitch *)sender
-{
+- (IBAction)enableTouchOutsideAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] enabledTouchResignedClasses] addObject:[self class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] enabledTouchResignedClasses] removeObject:[self class]];
     }
 }
 
-- (IBAction)allowedPreviousNextAction:(UISwitch *)sender
-{
+- (IBAction)allowedPreviousNextAction:(UISwitch *)sender {
     [self.view endEditing:YES];
     
-    if (sender.on)
-    {
+    if (sender.on) {
         [[[IQKeyboardManager sharedManager] toolbarPreviousNextAllowedClasses] addObject:[IQPreviousNextView class]];
-    }
-    else
-    {
+    } else {
         [[[IQKeyboardManager sharedManager] toolbarPreviousNextAllowedClasses] removeObject:[IQPreviousNextView class]];
     }
 }
 
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"SettingsNavigationController"])
-    {
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"SettingsNavigationController"]) {
         segue.destinationViewController.modalPresentationStyle = UIModalPresentationPopover;
         segue.destinationViewController.popoverPresentationController.barButtonItem = sender;
         
@@ -206,13 +168,11 @@
     }
 }
 
-- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
-{
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
     return UIModalPresentationNone;
 }
 
--(void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
-{
+- (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController {
     [self.view endEditing:YES];
 }
 

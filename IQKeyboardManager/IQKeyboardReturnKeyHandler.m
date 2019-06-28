@@ -164,13 +164,11 @@
     [textFieldInfoCache addObject:modal];
 }
 
--(void)updateReturnKeyTypeOnTextField:(UIView*)textField
-{
+- (void)updateReturnKeyTypeOnTextField:(UIView*)textField {
     UIView *superConsideredView;
     
     //If find any consider responderView in it's upper hierarchy then will get deepResponderView. (Bug ID: #347)
-    for (Class consideredClass in [[IQKeyboardManager sharedManager] toolbarPreviousNextAllowedClasses])
-    {
+    for (Class consideredClass in [[IQKeyboardManager sharedManager] toolbarPreviousNextAllowedClasses]) {
         superConsideredView = [textField superviewOfClassType:consideredClass];
         
         if (superConsideredView)
