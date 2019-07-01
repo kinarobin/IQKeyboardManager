@@ -511,6 +511,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     }
 }
 
+#warning TODO ------~~~~~~~~~~~~~~~~~~~
 /* Adjusting RootViewController's frame according to interface orientation. */
 - (void)adjustPosition {
     UIView *textFieldView = _textFieldView;
@@ -1076,7 +1077,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     CGFloat duration = [[aNotification userInfo][UIKeyboardAnimationDurationUserInfoKey] floatValue];
     
     //Saving animation duration
-    if (duration != 0.0)    _animationDuration = duration;
+    if (duration != 0.0) _animationDuration = duration;
     
     CGRect oldKBFrame = _kbFrame;
     
@@ -1655,17 +1656,16 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
                 [textField addKeyboardToolbarWithTarget:self titleText:(_shouldShowToolbarPlaceholder ? textField.drawingToolbarPlaceholder : nil) rightBarButtonConfiguration:rightConfiguration previousBarButtonConfiguration:nil nextBarButtonConfiguration:nil];
 
                 textField.inputAccessoryView.tag = kIQDoneButtonToolbarTag; //  (Bug ID: #78)
-            }
-            //If there is multiple siblings of textField
-            else if ((siblings.count && self.previousNextDisplayMode == IQPreviousNextDisplayModeDefault) || self.previousNextDisplayMode == IQPreviousNextDisplayModeAlwaysShow) {
+            } else if ((siblings.count && self.previousNextDisplayMode == IQPreviousNextDisplayModeDefault) || self.previousNextDisplayMode == IQPreviousNextDisplayModeAlwaysShow) {
+                
+                //If there is multiple siblings of textField
                 IQBarButtonItemConfiguration *prevConfiguration = nil;
                 
                 //Supporting Custom Done button image (Enhancement ID: #366)
                 if (_toolbarPreviousBarButtonItemImage) {
                     prevConfiguration = [[IQBarButtonItemConfiguration alloc] initWithImage:_toolbarPreviousBarButtonItemImage action:@selector(previousAction:)];
-                }
-                //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
-                else if (_toolbarPreviousBarButtonItemText) {
+                } else if (_toolbarPreviousBarButtonItemText) {
+                    //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
                     prevConfiguration = [[IQBarButtonItemConfiguration alloc] initWithTitle:_toolbarPreviousBarButtonItemText action:@selector(previousAction:)];
                 } else {
                     prevConfiguration = [[IQBarButtonItemConfiguration alloc] initWithImage:[UIImage keyboardPreviousImage] action:@selector(previousAction:)];
@@ -1676,9 +1676,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
                 //Supporting Custom Done button image (Enhancement ID: #366)
                 if (_toolbarNextBarButtonItemImage) {
                     nextConfiguration = [[IQBarButtonItemConfiguration alloc] initWithImage:_toolbarNextBarButtonItemImage action:@selector(nextAction:)];
-                }
-                //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
-                else if (_toolbarNextBarButtonItemText) {
+                } else if (_toolbarNextBarButtonItemText) {
+                    //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
                     nextConfiguration = [[IQBarButtonItemConfiguration alloc] initWithTitle:_toolbarNextBarButtonItemText action:@selector(nextAction:)];
                 } else {
                     nextConfiguration = [[IQBarButtonItemConfiguration alloc] initWithImage:[UIImage keyboardNextImage] action:@selector(nextAction:)];
@@ -1753,9 +1752,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
                     textField.keyboardToolbar.previousBarButton.enabled = NO;
                     textField.keyboardToolbar.nextBarButton.enabled = YES;
                 }
-            }
+            } else if ([siblings lastObject] == textField) {
             //    If lastTextField then next should not be enaled.
-            else if ([siblings lastObject] == textField) {
                 textField.keyboardToolbar.previousBarButton.enabled = YES;
                 textField.keyboardToolbar.nextBarButton.enabled = NO;
             } else {
