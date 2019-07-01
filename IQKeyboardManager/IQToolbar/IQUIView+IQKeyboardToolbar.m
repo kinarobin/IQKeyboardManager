@@ -281,7 +281,10 @@
 
 #pragma mark - Common
 
-- (void)addKeyboardToolbarWithTarget:(id)target titleText:(NSString*)titleText rightBarButtonConfiguration:(IQBarButtonItemConfiguration*)rightBarButtonConfiguration previousBarButtonConfiguration:(IQBarButtonItemConfiguration*)previousBarButtonConfiguration nextBarButtonConfiguration:(IQBarButtonItemConfiguration*)nextBarButtonConfiguration {
+- (void)addKeyboardToolbarWithTarget:(id)target
+                           titleText:(NSString*)titleText
+         rightBarButtonConfiguration:(IQBarButtonItemConfiguration*)rightBarButtonConfiguration
+      previousBarButtonConfiguration:(IQBarButtonItemConfiguration*)previousBarButtonConfiguration nextBarButtonConfiguration:(IQBarButtonItemConfiguration*)nextBarButtonConfiguration {
     //If can't set InputAccessoryView. Then return
     if (![self respondsToSelector:@selector(setInputAccessoryView:)]) return;
     
@@ -418,11 +421,11 @@
     [toolbar setItems:items];
     
     //  Setting toolbar to keyboard.
-    [(UITextField*)self setInputAccessoryView:toolbar];
+    [(UITextField *)self setInputAccessoryView:toolbar];
 
     
     if ([self respondsToSelector:@selector(keyboardAppearance)]) {
-        switch ([(UITextField*)self keyboardAppearance]) {
+        switch ([(UITextField *)self keyboardAppearance]) {
             case UIKeyboardAppearanceDark:
                 toolbar.barStyle = UIBarStyleBlack;     break;
             default:

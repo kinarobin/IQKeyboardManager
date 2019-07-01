@@ -45,25 +45,25 @@
     }];
 }
 
-- (NSArray<UIView*>*)sortedArrayByPosition
-{
+- (NSArray<UIView*>*)sortedArrayByPosition {
     return [self sortedArrayUsingComparator:^NSComparisonResult(UIView *view1, UIView *view2) {
-        
         CGFloat x1 = CGRectGetMinX(view1.frame);
         CGFloat y1 = CGRectGetMinY(view1.frame);
         CGFloat x2 = CGRectGetMinX(view2.frame);
         CGFloat y2 = CGRectGetMinY(view2.frame);
         
-        if (y1 < y2)  return NSOrderedAscending;
-        
-        else if (y1 > y2) return NSOrderedDescending;
-        
-        //Else both y are same so checking for x positions
-        else if (x1 < x2)  return NSOrderedAscending;
-        
-        else if (x1 > x2) return NSOrderedDescending;
-        
-        else    return NSOrderedSame;
+        if (y1 < y2) {
+            return NSOrderedAscending;
+        } else if (y1 > y2) {
+            return NSOrderedDescending;
+        } else if (x1 < x2) {
+            //Else both y are same so checking for x positions
+            return NSOrderedAscending;
+        } else if (x1 > x2) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
     }];
 }
 

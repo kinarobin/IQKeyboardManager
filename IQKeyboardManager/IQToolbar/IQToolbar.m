@@ -190,14 +190,13 @@
         }];
         
         for (UIView *barButtonItemView in subviews) {
-            if (isTitleBarButtonFound == YES) {
+            if (isTitleBarButtonFound) {
                 rightRect = barButtonItemView.frame;
                 break;
             } else if (barButtonItemView == self.titleBarButton.customView) {
                 isTitleBarButtonFound = YES;
-            }
-            //If it's UIToolbarButton or UIToolbarTextButton (which actually UIBarButtonItem)
-            else if ([barButtonItemView isKindOfClass:[UIControl class]]) {
+            } else if ([barButtonItemView isKindOfClass:[UIControl class]]) {
+                //If it's UIToolbarButton or UIToolbarTextButton (which actually UIBarButtonItem)
                 leftRect = barButtonItemView.frame;
             }
         }

@@ -1054,8 +1054,10 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     if ([self privateIsEnabled]) {
         UIView *textFieldView = _textFieldView;
         
-        if (textFieldView && _keyboardShowing == YES && CGPointEqualToPoint(_topViewBeginOrigin, kIQCGPointInvalid) == false &&
-            [textFieldView isAlertViewTextField] == NO)  {
+        if (textFieldView
+            && _keyboardShowing == YES
+            && !CGPointEqualToPoint(_topViewBeginOrigin, kIQCGPointInvalid)
+            && ![textFieldView isAlertViewTextField])  {
             [self optimizedAdjustPosition];
         }
     }
@@ -1112,7 +1114,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     if (!CGRectEqualToRect(_kbFrame, oldKBFrame)) {
         //If _textFieldView is inside UIAlertView then do nothing. (Bug ID: #37, #74, #76)
         //See notes:- https://developer.apple.com/library/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/KeyboardManagement/KeyboardManagement.html If it is UIAlertView textField then do not affect anything (Bug ID: #70).
-        if (_keyboardShowing == YES && textFieldView && [textFieldView isAlertViewTextField] == NO) {
+        if (_keyboardShowing && textFieldView && ![textFieldView isAlertViewTextField]) {
             [self optimizedAdjustPosition];
         }
     }
@@ -1378,11 +1380,6 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     [self showLog:[NSString stringWithFormat:@"****** %@ ended: %g seconds ******",NSStringFromSelector(_cmd),elapsedTime] indentation:-1];
 }
 
-//-(void)editingDidEndOnExit:(UITextField*)textField
-//{
-//    [self showLog:[NSString stringWithFormat:@"ReturnKey %@",NSStringFromSelector(_cmd)]];
-//}
-
 #pragma mark - UIStatusBar Notification methods
 /**  UIApplicationWillChangeStatusBarOrientationNotification. Need to set the textView to it's original position. If any frame changes made. (Bug ID: #92)*/
 - (void)willChangeStatusBarOrientation:(NSNotification*)aNotification {
@@ -1631,11 +1628,13 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     [self showLog:[NSString stringWithFormat:@"Found %lu responder sibling(s)",(unsigned long)siblings.count]];
 
     UIView *textFieldView = _textFieldView;
-
     //Either there is no inputAccessoryView or if accessoryView is not appropriate for current situation(There is Previous/Next/Done toolbar).
     //setInputAccessoryView: check   (Bug ID: #307)
     if ([textFieldView respondsToSelector:@selector(setInputAccessoryView:)]) {
-        if ([textFieldView inputAccessoryView] == nil || [[textFieldView inputAccessoryView] tag] == kIQPreviousNextButtonToolbarTag || [[textFieldView inputAccessoryView] tag] == kIQDoneButtonToolbarTag) {
+        if ([textFieldView inputAccessoryView] == nil
+            || [[textFieldView inputAccessoryView] tag] == kIQPreviousNextButtonToolbarTag
+            || [[textFieldView inputAccessoryView] tag] == kIQDoneButtonToolbarTag) {
+            
             UITextField *textField = (UITextField *)textFieldView;
 
             IQBarButtonItemConfiguration *rightConfiguration = nil;
@@ -1643,9 +1642,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
             //Supporting Custom Done button image (Enhancement ID: #366)
             if (_toolbarDoneBarButtonItemImage) {
                 rightConfiguration = [[IQBarButtonItemConfiguration alloc] initWithImage:_toolbarDoneBarButtonItemImage action:@selector(doneAction:)];
-            }
-            //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
-            else if (_toolbarDoneBarButtonItemText) {
+            } else if (_toolbarDoneBarButtonItemText) {
+                //Supporting Custom Done button text (Enhancement ID: #209, #411, Bug ID: #376)
                 rightConfiguration = [[IQBarButtonItemConfiguration alloc] initWithTitle:_toolbarDoneBarButtonItemText action:@selector(doneAction:)];
             } else {
                 rightConfiguration = [[IQBarButtonItemConfiguration alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone action:@selector(doneAction:)];
@@ -1839,7 +1837,7 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 }
 
 /**    nextAction. */
-- (void)nextAction:(IQBarButtonItem*)barButton {
+- (void)nextAction:(IQBarButtonItem *)barButton {
     //If user wants to play input Click sound. Then Play Input Click Sound.
     if (_shouldPlayInputClicks) {
         [[UIDevice currentDevice] playInputClick];
