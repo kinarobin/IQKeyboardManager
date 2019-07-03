@@ -599,11 +599,11 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
             break;
         } else {
             //  Getting it's superScrollView.   //  (Enhancement ID: #21, #24)
-            superView = (UIScrollView*)[superView superviewOfClassType:[UIScrollView class]];
+            superView = (UIScrollView *)[superView superviewOfClassType:[UIScrollView class]];
         }
     }
     
-    __strong __typeof__(UIScrollView) *strongLastScrollView = _lastScrollView;
+    __strong UIScrollView *strongLastScrollView = _lastScrollView;
 
     //If there was a lastScrollView.    //  (Bug ID: #34)
     if (strongLastScrollView) {
@@ -1324,17 +1324,11 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
         
         //If textFieldView is inside UIAlertView then do nothing. (Bug ID: #37, #74, #76)
         //See notes:- https://developer.apple.com/library/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/KeyboardManagement/KeyboardManagement.html If it is UIAlertView textField then do not affect anything (Bug ID: #70).
-        if (_keyboardShowing == YES && textFieldView && [textFieldView isAlertViewTextField] == NO) {
+        if (_keyboardShowing && textFieldView && [textFieldView isAlertViewTextField] == NO) {
             //  keyboard is already showing. adjust frame.
             [self optimizedAdjustPosition];
         }
     }
-    
-//    if ([textFieldView isKindOfClass:[UITextField class]])
-//    {
-//        [(UITextField*)textFieldView addTarget:self action:@selector(editingDidEndOnExit:) forControlEvents:UIControlEventEditingDidEndOnExit];
-//    }
-
     CFTimeInterval elapsedTime = CACurrentMediaTime() - startTime;
     [self showLog:[NSString stringWithFormat:@"****** %@ ended: %g seconds ******",NSStringFromSelector(_cmd),elapsedTime] indentation:-1];
 }
@@ -1349,13 +1343,8 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     //Removing gesture recognizer   (Enhancement ID: #14)
     [textFieldView.window removeGestureRecognizer:_resignFirstResponderGesture];
     
-//    if ([textFieldView isKindOfClass:[UITextField class]])
-//    {
-//        [(UITextField*)textFieldView removeTarget:self action:@selector(editingDidEndOnExit:) forControlEvents:UIControlEventEditingDidEndOnExit];
-//    }
-
     // We check if there's a change in original frame or not.
-    if (_isTextViewContentInsetChanged == YES && [textFieldView isKindOfClass:[UITextView class]]) {
+    if (_isTextViewContentInsetChanged && [textFieldView isKindOfClass:[UITextView class]]) {
         UITextView *textView = (UITextView*)textFieldView;
         self.isTextViewContentInsetChanged = NO;
         if (UIEdgeInsetsEqualToEdgeInsets(textView.contentInset, self.startingTextViewContentInsets) == NO) {
